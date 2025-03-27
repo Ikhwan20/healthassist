@@ -5,122 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HealthAssist - Book Appointment</title>
     <link rel="stylesheet" href="css/booking.css">
-    <script defer src="js/booking.js"></script>
-    <script defer src="js/header.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector('.booking-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Collect appointment and payment details
-            const paymentDate = document.getElementById('preferred-date').value;
-            const paymentMethod = document.getElementById('payment-method').value;
-            const checkupName = document.getElementById('appointment-name').textContent; // Assuming the appointment name is set in the page
-            const appointmentTime = "10:00:00"; // Default time (can be adjusted or added as an input field)
-
-            // Retrieve card details if the payment method is Credit Card or Debit Card
-            const cardNumber = paymentMethod === 'CREDIT CARD' || paymentMethod === 'DEBIT CARD' 
-                ? document.getElementById('card-number').value 
-                : null;
-            const expiryDate = paymentMethod === 'CREDIT CARD' || paymentMethod === 'DEBIT CARD' 
-                ? document.getElementById('expiry-date').value 
-                : null;
-            const cvv = paymentMethod === 'CREDIT CARD' || paymentMethod === 'DEBIT CARD' 
-                ? document.getElementById('cvv').value 
-                : null;
-
-            // Retrieve the JWT token from localStorage
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                return alert('Token is required. Please log in first.');
-            }
-
-            // Decode the JWT token to retrieve user ID
-            const decodedToken = jwt_decode(token);
-            const userId = decodedToken.user_id;
-
-            // Prepare appointment data
-            const appointmentData = {
-                user_id: userId,
-                appointment_date: paymentDate,
-                appointment_time: appointmentTime,
-                checkup_name: checkupName,
-            };
-
-            // Prepare payment data
-            const paymentData = {
-                user_id: userId,
-                payment_date: paymentDate,
-                payment_method: paymentMethod,
-                card_number: cardNumber,
-                expiry_date: expiryDate,
-                cvv: cvv,
-            };
-
-            try {
-                // Send payment data to the API
-                const paymentResponse = await fetch('/api/payments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(paymentData),
-                });
-
-                if (!paymentResponse.ok) {
-                    const error = await paymentResponse.json();
-                    return alert('Failed to record payment: ' + error.error);
-                }
-
-                const paymentResult = await paymentResponse.json();
-                alert('Payment successfully recorded! Payment ID: ' + paymentResult.payment_id);
-
-                // Send appointment data to the API
-                const appointmentResponse = await fetch('/api/appointments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(appointmentData),
-                });
-
-                if (appointmentResponse.ok) {
-                    const appointmentResult = await appointmentResponse.json();
-                    alert('Appointment successfully created! Appointment ID: ' + appointmentResult.appointment_id);
-                } else {
-                    const error = await appointmentResponse.json();
-                    alert('Failed to create appointment: ' + error.error);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while processing the booking.');
-            }
-        });
-
-        // Show/Hide card details based on payment method
-        const paymentMethodSelect = document.getElementById('payment-method');
-        const cardDetails = document.getElementById('card-details');
-        paymentMethodSelect.addEventListener('change', () => {
-            if (paymentMethodSelect.value === 'CREDIT CARD' || paymentMethodSelect.value === 'DEBIT CARD') {
-                cardDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-            }
-        });
-    });
-
-    </script>     
+    <script defer src="js/header.js"></script>
+    <script defer src="js/booking.js"></script>
 </head>
 <body data-page="appointment">
-
     <!-- Placeholder for Header -->
     <div id="header-placeholder"></div>
 
     <main>
-        <section hidden id="appointment-title"></section>
         <section class="intro">
             <h1>Book Appointment</h1>
         </section>
@@ -135,66 +29,234 @@
             </div>
             
             <div class="info-section">
-                <h2>Tests Included:</h2>
-                <ul id="tests-list">
-                    <!-- Tests will be dynamically added here -->
-                </ul>
-                <h2>Importance:</h2>
-                <ul id="importance-text">
-                    <!-- Tests will be dynamically added here -->
-                </ul>
-                <h2>When You Should Schedule This Checkup:</h2>
-                <ul id="appointment-schedule">
-                    <!-- Tests will be dynamically added here -->
-                </ul>
-                <form class="booking-form">
-                    <input type="hidden" id="appointment-title" value="">
-                    <label for="payment-method">Payment Method:</label>
-                    <select id="payment-method" name="payment-method">
-                        <option value="CASH">Cash</option>
-                        <option value="CREDIT CARD">Credit Card</option>
-                        <option value="DEBIT CARD">Debit Card</option>
-                        <option value="INSURANCE">Insurance</option>
-                    </select>
-                
-                    <div id="card-details" style="display: none;">
-                        <label for="card-number">Card Number:</label>
-                        <input type="text" id="card-number" name="card-number" placeholder="Enter your card number">
-                
-                        <label for="expiry-date">Expiry Date:</label>
-                        <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY">
-                
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" name="cvv" placeholder="CVV">
-                    </div>
-                
+                <h2>Booking Details</h2>
+                <form id="booking-form">
                     <label for="preferred-date">Preferred Date:</label>
                     <input type="date" id="preferred-date" name="preferred-date" required>
-                
-                    <button type="submit" class="book-now-btn">BOOK NOW</button>
+
+                    <label for="preferred-time">Preferred Time:</label>
+                    <select id="preferred-time" name="preferred-time" required>
+                        <option value="">Select a Time Slot</option>
+                        <option value="09:00:00">9:00 AM</option>
+                        <option value="10:00:00">10:00 AM</option>
+                        <option value="11:00:00">11:00 AM</option>
+                        <option value="14:00:00">2:00 PM</option>
+                        <option value="15:00:00">3:00 PM</option>
+                        <option value="16:00:00">4:00 PM</option>
+                    </select>
+
+                    <button type="submit" class="book-now-btn">Proceed to Payment</button>
                 </form>
-                
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const paymentMethodSelect = document.getElementById('payment-method');
-                        const cardDetails = document.getElementById('card-details');
-                
-                        // Listen for changes in the payment method dropdown
-                        paymentMethodSelect.addEventListener('change', () => {
-                            const selectedMethod = paymentMethodSelect.value;
-                
-                            // Show card details if Credit Card or Debit Card is selected
-                            if (selectedMethod === 'CREDIT CARD' || selectedMethod === 'DEBIT CARD') {
-                                cardDetails.style.display = 'block';
-                            } else {
-                                cardDetails.style.display = 'none';
-                            }
-                        });
-                    });
-                </script>
-                
             </div>
         </section>
+
+        <!-- Stripe Payment Modal -->
+        <div id="payment-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>Payment Details</h2>
+                <form id="payment-form">
+                    <div id="payment-element">
+                        <!-- Stripe Elements Placeholder -->
+                    </div>
+                    <div id="payment-message" class="hidden"></div>
+                    <button id="submit-payment">Pay RM 50</button>
+                </form>
+            </div>
+        </div>
     </main>
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stripe = Stripe('pk_test_51MCnscJMRXWHq5B5qcygFOqmMRGPdzOO5MpSWNDkvkDooJuC9WyCDpigrtv0sz8tlzsGKUZybCQaLtbaBjvNWQIc00UNiQw0U6'); // Replace with your actual publishable key
+            let elements;
+            let paymentIntentClientSecret;
+
+            // Modal elements
+            const modal = document.getElementById('payment-modal');
+            const closeButton = document.querySelector('.close-button');
+            const bookingForm = document.getElementById('booking-form');
+            const paymentForm = document.getElementById('payment-form');
+
+            // Open modal function
+            function openPaymentModal() {
+                modal.style.display = 'block';
+            }
+
+            // Close modal function
+            function closePaymentModal() {
+                modal.style.display = 'none';
+            }
+
+            // Close modal when clicking on close button
+            closeButton.addEventListener('click', closePaymentModal);
+
+            // Close modal when clicking outside of it
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closePaymentModal();
+                }
+            });
+
+            // Booking Form Submit
+            bookingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Retrieve the JWT token and user ID
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    return alert('Token is required. Please log in first.');
+                }
+                const decodedToken = jwt_decode(token);
+                const userId = decodedToken.user_id;
+
+                // Create Payment Intent
+                try {
+                    const response = await fetch('/create-payment-intent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ 
+                            amount: 50, // Fixed price of RM 50
+                            currency: 'myr' 
+                        })
+                    });
+
+                    const { clientSecret } = await response.json();
+                    paymentIntentClientSecret = clientSecret;
+
+                    // Initialize Stripe Elements
+                    elements = stripe.elements({ 
+                        mode: 'payment', 
+                        amount: 5000, // 50 RM in cents 
+                        currency: 'myr' 
+                    });
+
+                    const paymentElement = elements.create('payment');
+                    paymentElement.mount('#payment-element');
+
+                    // Open payment modal
+                    openPaymentModal();
+                } catch (error) {
+                    console.error('Payment intent creation failed:', error);
+                    alert('Failed to initiate payment. Please try again.');
+                }
+            });
+
+            // Payment Form Submit
+            paymentForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const token = localStorage.getItem('authToken');
+                const decodedToken = jwt_decode(token);
+                const userId = decodedToken.user_id;
+
+                try {
+                    const { error, paymentIntent } = await stripe.confirmPayment({
+                        elements,
+                        confirmParams: {
+                            return_url: window.location.href
+                        },
+                        redirect: 'if_required'
+                    });
+
+                    if (error) {
+                        // Handle payment error
+                        const messageContainer = document.getElementById('payment-message');
+                        messageContainer.textContent = error.message;
+                        messageContainer.style.color = 'red';
+                        return;
+                    }
+
+                    // Prepare appointment data
+                    const appointmentData = {
+                        user_id: userId,
+                        appointment_date: document.getElementById('preferred-date').value,
+                        appointment_time: document.getElementById('preferred-time').value,
+                        checkup_name: document.getElementById('appointment-name').textContent,
+                    };
+
+                    const paymentData = {
+                        user_id: userId,
+                        payment_date: new Date().toISOString().split('T')[0],
+                        payment_method: 'STRIPE',
+                        stripe_payment_intent_id: paymentIntent.id,
+                        amount: 50 // Fixed amount
+                    };
+
+                    // Send appointment and payment data to server
+                    const paymentResponse = await fetch('/api/payments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(paymentData)
+                    });
+
+                    const appointmentResponse = await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(appointmentData)
+                    });
+
+                    if (paymentResponse.ok && appointmentResponse.ok) {
+                        alert('Appointment booked and payment processed successfully!');
+                        closePaymentModal();
+                        // Optional: Redirect to appointments page or reset form
+                    } else {
+                        throw new Error('Booking or payment recording failed');
+                    }
+                } catch (error) {
+                    console.error('Booking error:', error);
+                    alert('Error processing booking. Please try again.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

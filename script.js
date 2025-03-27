@@ -3,6 +3,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')('sk_test_51MCnscJMRXWHq5B5WfkH0vmu9OvcHcvZAGkrJ8XBbIj4cXK0bASOJjN5aNXPlWVGOUfHkWt0dA9HWYF2ZxTsA3dD0004mVKxnj'); // Replace with your actual Stripe secret key
 
 const app = express();
 const PORT = 3000;
@@ -99,51 +100,55 @@ const authenticateJWT = (req, res, next) => {
     });
 };
 
-// API: Submit Payment (Protected Route)
-app.post('/api/payments', authenticateJWT, (req, res) => {
-    const { payment_date, payment_method, card_number, expiry_date, cvv } = req.body;
-    const user_id = req.user.user_id; // Get user ID from decoded token
+// // API: Submit Payment (Protected Route)
+// app.post('/api/payments', authenticateJWT, async (req, res) => {
+//     const { 
+//         payment_date, 
+//         payment_method, 
+//         stripe_payment_intent_id 
+//     } = req.body;
+//     const user_id = req.user.user_id;
 
-    // Validate required fields
-    if (!payment_date || !payment_method) {
-        return res.status(400).json({ error: 'Payment date and method are required' });
-    }
+//     try {
+//         // Verify the Stripe PaymentIntent
+//         const paymentIntent = await stripe.paymentIntents.retrieve(stripe_payment_intent_id);
+        
+//         if (paymentIntent.status !== 'succeeded') {
+//             return res.status(400).json({ error: 'Payment not completed' });
+//         }
 
-    // Additional validation for card details if payment method is "Credit Card" or "Debit Card"
-    if (
-        (payment_method === 'Credit Card' || payment_method === 'Debit Card') &&
-        (!card_number || !expiry_date || !cvv)
-    ) {
-        return res
-            .status(400)
-            .json({ error: 'Card details are required for Credit Card or Debit Card payments' });
-    }
+//         const query = `
+//             INSERT INTO payments (
+//                 user_id, 
+//                 payment_date, 
+//                 payment_method, 
+//                 stripe_payment_intent_id, 
+//                 amount
+//             ) VALUES (?, ?, ?, ?, ?)
+//         `;
 
-    // Query to insert payment details
-    const query = `
-        INSERT INTO payments (user_id, payment_date, payment_method, card_number, expiry_date, cvv)
-        VALUES (?, ?, ?, ?, ?, ?)
-    `;
+//         db.query(query, [
+//             user_id, 
+//             payment_date, 
+//             payment_method, 
+//             stripe_payment_intent_id,
+//             paymentIntent.amount / 100 // Convert back to dollars
+//         ], (err, result) => {
+//             if (err) {
+//                 console.error('Error inserting payment:', err);
+//                 return res.status(500).json({ error: 'Database error' });
+//             }
 
-    console.log(payment_method, card_number.slice(-4), expiry_date, cvv);
-    // Insert card details only if the payment method is "Credit Card" or "Debit Card"
-    const params = payment_method === 'CREDIT CARD' || payment_method === 'DEBIT CARD'
-        ? [user_id, payment_date, payment_method, card_number.slice(-4), expiry_date, cvv]
-        : [user_id, payment_date, payment_method, null, null, null];
-
-    db.query(query, params, (err, result) => {
-        if (err) {
-            console.error('Error inserting payment:', err.message);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        res.status(201).json({
-            message: 'Payment recorded successfully',
-            payment_id: result.insertId,
-        });
-    });
-});
-
+//             res.status(201).json({
+//                 message: 'Payment recorded successfully',
+//                 payment_id: result.insertId,
+//             });
+//         });
+//     } catch (error) {
+//         console.error('Stripe payment verification error:', error);
+//         res.status(500).json({ error: 'Payment verification failed' });
+//     }
+// });
 
 // API: Create Appointment (Protected Route)
 app.post('/api/appointments', authenticateJWT, (req, res) => {
@@ -204,4 +209,78 @@ app.post('/logout', (req, res) => {
 // Start the Server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+});
+
+// Route to create payment intent
+app.post('/create-payment-intent', authenticateJWT, async (req, res) => {
+    const { amount, currency = 'myr' } = req.body;
+
+    try {
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount * 100, // Stripe expects amount in cents
+            currency: currency,
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (err) {
+        console.error('Payment Intent Creation Error:', err);
+        res.status(500).send({ error: err.message });
+    }
+});
+
+// Modified payments route
+app.post('/api/payments', authenticateJWT, async (req, res) => {
+    const { 
+        user_id, 
+        payment_date, 
+        payment_method, 
+        stripe_payment_intent_id,
+        amount
+    } = req.body;
+
+    try {
+        // Verify the Stripe PaymentIntent
+        const paymentIntent = await stripe.paymentIntents.retrieve(stripe_payment_intent_id);
+        
+        if (paymentIntent.status !== 'succeeded') {
+            return res.status(400).json({ error: 'Payment not completed' });
+        }
+
+        const query = `
+            INSERT INTO payments (
+                user_id, 
+                payment_date, 
+                payment_method, 
+                stripe_payment_intent_id, 
+                amount
+            ) VALUES (?, ?, ?, ?, ?)
+        `;
+
+        db.query(query, [
+            user_id, 
+            payment_date, 
+            payment_method, 
+            stripe_payment_intent_id,
+            amount
+        ], (err, result) => {
+            if (err) {
+                console.error('Error inserting payment:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+
+            res.status(201).json({
+                message: 'Payment recorded successfully',
+                payment_id: result.insertId,
+            });
+        });
+    } catch (error) {
+        console.error('Stripe payment verification error:', error);
+        res.status(500).json({ error: 'Payment verification failed' });
+    }
 });
