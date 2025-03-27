@@ -1,0 +1,47 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fefdf9;
+    color: #3a3a3a;
+}
+
+.intro h1 {
+    font-size: 2.0rem;
+    color: #990000;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Tips Grid */
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.tip-box {
+    background-color: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tip-box p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.tip-box .tip {
+    font-style: italic;
+    color: #555;
+    font-size: 0.9rem;
+}

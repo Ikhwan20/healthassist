@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAssist - Our Specialists</title>
+    <link rel="stylesheet" href="css/viewappointment.css">
+    <script defer src="js/header.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          // Retrieve the JWT token from localStorage
+            const token = localStorage.getItem('authToken');
+                if (!token) {
+                    return alert('Token is required. Please log in first.');
+                }
+
+            // Decode the JWT token to retrieve user ID
+            const decodedToken = jwt_decode(token);
+            const userId = decodedToken.user_id;
+      
+          // Select the container for displaying appointments
+            const appointmentBox = document.querySelector(".appointment-box");
+      
+          // Fetch appointments from the backend
+            fetch(`/api/appointments?user_id=${userId}`)
+                .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch appointments.");
+                }
+                return response.json();
+                })
+                .then((appointments) => {
+                // Clear existing content in the appointment box
+                appointmentBox.innerHTML = "<h2>Your Appointments</h2>";
+        
+                if (appointments.length === 0) {
+                    appointmentBox.innerHTML += "<p>No appointments found.</p>";
+                } else {
+                    appointments.forEach((appointment) => {
+                    const appointmentDetails = `
+                        <div class="appointment-details">
+                        <p><strong>${appointment.checkup_name}</strong></p>
+                        <p>${new Date(appointment.appointment_date).toLocaleDateString()}</p>
+                        <p>${appointment.appointment_time}</p>
+                        </div>
+                    `;
+                    appointmentBox.innerHTML += appointmentDetails;
+                    });
+                }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              appointmentBox.innerHTML = "<p>Error loading appointments.</p>";
+            });
+        });
+      </script>
+</head>
+
+<body data-page="viewappointment">
+
+    <!-- Placeholder for Header -->
+    <div id="header-placeholder"></div>
+    <section class="intro">
+        <h1>View Appointment</h1>
+    </section>
+
+    <main>
+        <section class="appointment-container">
+          <div class="appointment-box">
+            <h2>Your Appointment</h2>
+            <div class="appointment-details">
+              <p><strong>Growth and Development Checkup</strong></p>
+              <p>21/12/2024</p>
+              <p>1 PM</p>
+            </div>
+          </div>
+          <div class="appointment-info">
+            <p>
+              To ensure a smooth and hassle-free checkup experience, please remember to bring the following:
+            </p>
+            <ol>
+              <li>Your Identification Card (IC)</li>
+              <li>Medical Records (if applicable)</li>
+              <li>Your Appointment Confirmation</li>
+            </ol>
+          </div>
+        </section>
+      </main>
+    </body>
+</html>

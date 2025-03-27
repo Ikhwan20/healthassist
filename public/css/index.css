@@ -1,0 +1,70 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.hero-section {
+  position: relative;
+  text-align: center;
+  color: #000;
+}
+.hero-image {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  filter: brightness(70%);
+}
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+}
+.hero-logo {
+  width: 120px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+}
+h1 {
+  font-size: 3em;
+  margin: 10px 0;
+}
+p {
+  font-size: 1.5em;
+  margin: 10px 0;
+}
+.btn {
+  display: inline-block; /* Keep it centered */
+  padding: 10px 20px;
+  font-size: 1.2em;
+  color: #000000;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 40px 0 0; /* Add top margin to push it further down */
+  position: relative; /* Ensure it moves only within its container */
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+.sign-up {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1em;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 15px;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.sign-up:hover {
+  background-color: #f0f0f0;
+}

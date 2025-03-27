@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="css/header.css">
+  </head>
+  <body>
+    <header>
+      <nav style="position: relative; z-index: 1;">
+        <div class="logo">
+          <a href="index.html"><img src="assets/logo.jpg" alt="HealthAssist Logo" style="z-index: 1;"></a>
+        </div>
+        <ul style="z-index: 1;">
+          <li><a href="homepage.html" data-page="homepage">Home</a></li>
+          <li><a href="specialist.html" data-page="specialist">Our Specialist</a></li>
+          <li><a href="appointment.html" data-page="appointment">Appointment</a></li>
+          <li><a href="pregnancy.html" data-page="pregnancy">Pregnancy Calculator</a></li>
+          <li><a href="viewappointment.html" data-page="viewappointment">View Appointment</a></li>
+        </ul>
+        
+      </nav>
+      <div id="auth-button-container" class="logout-btn" style="z-index: 1;"></div> <!-- Placeholder for dynamic button -->
+    </header>
+    <script src="js/dynamicbutton.js" defer></script> <!-- Move the logic to a separate file -->
+  </body>
+</html>

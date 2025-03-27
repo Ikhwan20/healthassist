@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+    
+                const emailOrUsername = document.querySelector('#emailOrUsername').value;
+                const password = document.querySelector('#password').value;
+    
+                try {
+                    const response = await fetch('http://localhost:3000/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ emailOrUsername, password }),
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const token = data.token;  // Extract the JWT token from the response
+    
+                        // Store the token in localStorage
+                        localStorage.setItem('authToken', token);
+                        //alert('Login successful!');
+    
+                        // Check if the user is an admin and redirect accordingly
+                        const decodedToken = jwt_decode(token); // Decode the token to access user data (e.g., user_type)
+                        if (decodedToken.user_type === 'admin') {
+                            window.location.href = '/admin/dashboard.html';
+                        } else {
+                            window.location.href = 'homepage.html';
+                        }
+                    } else {
+                        alert('Invalid credentials. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    alert('An error occurred. Please try again later.');
+                }
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1>LOGIN</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="emailOrUsername">Email / Username</label>
+                    <input type="text" id="emailOrUsername" name="emailOrUsername" placeholder="Enter your email or username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit">Sign In</button>
+                </div>
+                <p class="register-link">Haven't Registered? <a href="register.html">Sign Up!</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

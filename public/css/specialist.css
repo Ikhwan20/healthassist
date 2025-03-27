@@ -1,0 +1,63 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fefdf9;
+    color: #3a3a3a;
+}
+
+.intro h1 {
+    font-size: 2.0rem;
+    color: #990000;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.specialists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 40px 20px;
+}
+
+.specialist-box {
+    background-color: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Image standardization */
+.specialist-box img {
+    width: 100%;              /* Ensures images span the full width of their container */
+    max-width: 300px;         /* Restricts the width to a maximum of 300px */
+    height: 300px;            /* Sets a fixed height for all images */
+    object-fit: cover;        /* Ensures images fill the container proportionally */
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.specialist-box h3 {
+    margin: 10px 0;
+    font-size: 1.2rem;
+    color: #990000;
+}
+
+.specialist-box p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+.specialist-box .specialty {
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}

@@ -1,0 +1,73 @@
+/* Header Section */
+header {
+    display: flex;
+    justify-content: space-between; /* Space between logo/nav and logout button */
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo styling */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.logo img {
+    height: 50px; /* Adjust logo size */
+    width: auto;
+}
+
+/* Navigation styling */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0 auto; /* Center navigation menu */
+    padding: 0;
+    gap: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #3a3a3a;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    background-color: #990000;
+    color: white;
+}
+
+/* Logout Button */
+.logout-btn {
+    background-color: #990000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 20px; /* Add spacing between nav and button */
+}
+
+.logout-btn:hover {
+    background-color: #d42b2b;
+}
+
+#auth-button-container a {
+    text-decoration: none; /* Removes underline */
+    color: inherit;        /* Makes the text color inherit from the parent */
+}

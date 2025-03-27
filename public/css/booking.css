@@ -1,0 +1,128 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fefdf9;
+    color: #3a3a3a;
+}
+
+.intro h1 {
+    font-size: 2.0rem;
+    color: #990000;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Booking Details Section */
+.booking-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 40px 20px;
+}
+
+.image-section {
+    flex: 1;
+    max-width: 40%;
+    text-align: center;
+}
+
+.image-section .appointment-name{
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.image-section .book-now {
+    position: absolute; /* Positions it relative to the parent container */
+    bottom: 10px; /* Pushes it near the bottom of the image */
+    left: 50%; /* Centers horizontally */
+    transform: translateX(-50%); /* Adjusts for true horizontal centering */
+    background-color: rgba(0, 0, 0, 0.7); /* Adds a semi-transparent background for readability */
+    color: white; /* Text color */
+    padding: 5px 10px; /* Adds padding around the text */
+    font-size: 1.2rem; /* Adjusts font size */
+    border-radius: 4px; /* Rounds the corners */
+}
+
+.image-section .image {
+    position: relative; /* Establishes a positioning context for child elements */
+    width: 100%;
+    max-width: 300px; /* Set a maximum width for the container */
+    margin: 20px auto; /* Centers the section */
+    text-align: center;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures content like the "BOOK NOW" text doesn't overflow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional styling */
+}
+
+.image-section .image img {
+    width: 200%; /* Makes the image responsive */
+    height: auto;
+    display: block; /* Removes default inline spacing */
+}
+
+
+.info-section {
+    flex: 2;
+    max-width: 60%;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h2, .info-section h3 {
+    color: #990000;
+}
+
+.info-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.info-section p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.booking-form {
+    margin-top: 20px;
+}
+
+.booking-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.booking-form select, .booking-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.booking-form button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #990000;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.booking-form button:hover {
+    background-color: #cc0000;
+}

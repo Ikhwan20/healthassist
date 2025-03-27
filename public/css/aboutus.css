@@ -1,0 +1,75 @@
+/* General Reset */
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Main Section */
+  main.about-us {
+    background-color: #5d4037;
+    color: white;
+    padding: 20px;
+  }
+  
+  .intro {
+    display: flex; /* Align text and image side by side */
+    align-items: center; /* Vertically align items */
+    justify-content: center; /* Bring items close to the left */
+    gap: 20px; /* Space between text and image */
+    padding: 20px;
+  }
+
+  .image {
+    padding: 20px;
+  }
+  
+  .intro h1 {
+    font-size: 2.5rem;
+  }
+
+  .intro p {
+    margin: 0px; /* Remove unnecessary margin */
+  }
+  
+  .intro img {
+    max-width: 200%; /* Set a fixed width for better alignment */
+    height: 50%;
+    border-radius: 10px;
+    /* margin: 100px 0; */
+  }
+  
+  .details {
+    display: flex;
+    flex-wrap: wrap; /* Adjust layout for small screens */
+    justify-content: space-between;
+    gap: 20px; /* Space between info blocks */
+    margin-top: 20px;
+  }
+  
+  .details div {
+    flex: 1;
+    min-width: 250px; /* Ensure all blocks stay consistent */
+    padding: 20px;
+    background-color: #3e2723;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  .details h2 {
+    margin-bottom: 10px;
+  }
+  
+  .details p {
+    margin-bottom: 10px;
+  }
+  
+  .details a {
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  .icon-location, .icon-phone, .icon-email, .icon-facebook, .icon-twitter, .icon-instagram {
+    margin-right: 10px;
+  }
+  

@@ -1,0 +1,70 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fefdf9;
+    color: #3a3a3a;
+}
+
+.intro h1 {
+    font-size: 2.0rem;
+    color: #990000;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+/* Appointments Page Grid */
+.appointments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 40px 20px;
+}
+
+.appointment-box {
+    background-color: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-box .appointment-name{
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.appointment-box img {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.appointment-box p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.book-now-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #990000;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.book-now-btn:hover {
+    background-color: #cc0000;
+}

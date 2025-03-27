@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy Calculator</title>
+    <link rel="stylesheet" href="css/pregnancy.css">
+    <script defer src="js/pregnancy.js"></script>
+    <script defer src="js/header.js"></script>
+</head>
+<body data-page="pregnancy">
+
+    <!-- Placeholder for Header -->
+    <div id="header-placeholder"></div>
+    
+  <main>
+    <section class="calculator">
+      <h1>Estimate Your Due Date</h1>
+      <form id="due-date-form">
+        <label for="lmp">Date of Last Menstrual Period (LMP)</label>
+        <input type="date" id="lmp" required>
+        <button type="button" id="calculate-btn">Calculate Due Date</button>
+      </form>
+      <div id="result">
+        <h2>Your Estimated Due Date</h2>
+        <p id="due-date"></p>
+      </div>
+    </section>
+    <aside class="image-section">
+      <img src="assets/pregnancy_consultation.jpg" alt="Pregnancy Consultation">
+    </aside>
+  </main>
+
+  <script src="../js/pregnancy.js"></script>
+</body>
+</html>
